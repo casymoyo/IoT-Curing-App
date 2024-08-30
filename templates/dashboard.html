@@ -17,7 +17,7 @@
         <h1>Current Humidity: <span id="humidity">N/A</span></h1>
     </div>
     <script>
-        const temperatureSocket = new WebSocket('ws://localhost:8000/ws/temperature/');
+        const temperatureSocket = new WebSocket(`ws://${window.location.host}/ws/temperature/`);
         const humiditySocket = new WebSocket('ws://localhost:8000/ws/humidity/');
 
         temperatureSocket.onmessage = function(e) {

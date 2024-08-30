@@ -4,6 +4,7 @@ from channels.layers import get_channel_layer
 from .models import Temperature, Humidity
 from django.shortcuts import render
 
+
 def dashboard(request):
     return render(request, 'dashboard.html')
 
