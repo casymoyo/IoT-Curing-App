@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 80%; margin: auto; padding: 20px; }
+        h1 { font-size: 2em; }
+        p { font-size: 1.5em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Current Temperature: <span id="temperature">N/A</span></h1>
+        <h1>Current Humidity: <span id="humidity">N/A</span></h1>
+    </div>
+    <script>
+        const temperatureSocket = new WebSocket('ws://localhost:8000/ws/temperature/');
+        const humiditySocket = new WebSocket('ws://localhost:8000/ws/humidity/');
+
+        temperatureSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.getElementById('temperature').textContent = data.temperature;
+        };
+
+        humiditySocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.getElementById('humidity').textContent = data.humidity;
+        };
+
+        temperatureSocket.onclose = function(e) {
+            console.error('Temperature WebSocket closed unexpectedly');
+        };
+
+        humiditySocket.onclose = function(e) {
+            console.error('Humidity WebSocket closed unexpectedly');
+        };
+    </script>
+</body>
+</html>
