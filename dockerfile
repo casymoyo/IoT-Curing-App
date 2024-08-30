@@ -21,4 +21,4 @@ COPY . /app/
 EXPOSE 8000
 
 # Run Django and Celery as background processes
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn curing_backend.wsgi:application --bind 0.0.0.0:8000 & celery -A curing_backend worker --loglevel=info"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn curing_backend.wsgi:application --bind 0.0.0.0:8000"]
