@@ -5,6 +5,13 @@ from rest_framework.response import Response
 from .models import Stage, Temperature, Humidity, Config, AlertLog
 from .serializers import StageSerializer, TemperatureSerializer, HumiditySerializer, ConfigSerializer, AlertLogSerializer
 
+from django.http import HttpResponse
+from .tasks import add
+
+def test_task(request):
+    result = add.delay(10, 20)
+    return HttpResponse(f'Task result: {result.get(timeout=1)}')
+
 class StageViewSet(viewsets.ModelViewSet):
     queryset = Stage.objects.all()
     serializer_class = StageSerializer
@@ -40,3 +47,6 @@ class ConfigViewSet(viewsets.ModelViewSet):
 class AlertLogViewSet(viewsets.ModelViewSet):
     queryset = AlertLog.objects.all()
     serializer_class = AlertLogSerializer
+    
+
+

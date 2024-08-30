@@ -5,7 +5,8 @@ from .views import (
     TemperatureViewSet, 
     HumidityViewSet, 
     ConfigViewSet, 
-    AlertLogViewSet
+    AlertLogViewSet,
+    test_task
 )
 
 router = DefaultRouter()
@@ -17,4 +18,5 @@ router.register(r'alert-logs', AlertLogViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('test-task/', test_task, name='test_task'),
 ]
