@@ -6,7 +6,9 @@ class Stage(models.Model):
         INITIAL = 'initial', _("Initial")
         MID = 'mid', _("Mid")
         FINAL = 'final', _("Final")
+        
     name = models.CharField(max_length=10, verbose_name=_("Stage Name"), choices=StageChoices.choices)
+    selected = models.BooleanField(default=False)
     
     def __str__(self) -> str:
         return self.name
@@ -18,6 +20,7 @@ class Stage(models.Model):
 class Temperature(models.Model):
     value = models.FloatField(verbose_name=_("Temperature Value"))
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name=_("Timestamp"))
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     
     def __str__(self) -> str:
         return f'{self.value}°C'
@@ -29,6 +32,7 @@ class Temperature(models.Model):
 class Humidity(models.Model):
     value = models.FloatField(verbose_name=_("Humidity Value"))
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name=_("Timestamp"))
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     
     def __str__(self) -> str:
         return f'{self.value}%'
@@ -41,8 +45,13 @@ class Config(models.Model):
     class NameChoices(models.TextChoices):
         TEMPERATURE = 'temperature', _("Temperature")
         HUMIDITY = 'humidity', _("Humidity")
+    
+    class StageChoices(models.TextChoices):
+        INITIAL = 'initial', _("Initial")
+        MID = 'mid', _("Mid")
+        FINAL = 'final', _("Final")
         
-    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, verbose_name=_("Stage"))
+    stage = models.CharField(max_length=20, choices=StageChoices.choices)
     name = models.CharField(max_length=20, choices=NameChoices.choices)
     lower_limit_value = models.FloatField(verbose_name=_("Config Value"))
     upper_limit_value = models.FloatField(verbose_name=_("Config Value"))
@@ -64,6 +73,7 @@ class AlertLog(models.Model):
     timestamp = models.DateTimeField(db_index=True, verbose_name=_("Timestamp"))
     description = models.CharField(max_length=255, verbose_name=_("Description"))
     alert_type = models.CharField(max_length=10, choices=AlertType.choices, verbose_name=_("Alert Type"))
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, null=True)
     
     def __str__(self) -> str:
         return f'{self.timestamp}: ({self.get_alert_type_display()})'

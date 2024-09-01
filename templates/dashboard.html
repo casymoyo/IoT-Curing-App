@@ -1,42 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Data</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 80%; margin: auto; padding: 20px; }
-        h1 { font-size: 2em; }
-        p { font-size: 1.5em; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Current Temperature: <span id="temperature">N/A</span></h1>
-        <h1>Current Humidity: <span id="humidity">N/A</span></h1>
+{% extends 'base.html' %}
+{% block title %}
+  Dashboard
+{% endblock title %}
+{% block content %}
+<style>
+    .container {
+        margin-top: 20px;
+    }
+    .row {
+        margin-bottom: 20px;
+    }
+    .alert-table {
+        margin-top: 20px;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.3em 0.5em;
+    }
+    .temperature-humidity {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+<div class="container">
+    <div class='d-flex justify-content-between mt-3'>
+        <h4>Stage</h4>
+        <div>
+            <select id="stage-select" class="form-control">
+                {% for stage in stages %}
+                    <option value="{{ stage.id }}" {% if stage.selected %}selected{% endif %}>
+                        {{ stage.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
     </div>
-    <script>
-        const temperatureSocket = new WebSocket(`ws://${window.location.host}/ws/temperature/`);
-        const humiditySocket = new WebSocket('ws://localhost:8000/ws/humidity/');
-
-        temperatureSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.getElementById('temperature').textContent = data.temperature;
-        };
-
-        humiditySocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.getElementById('humidity').textContent = data.humidity;
-        };
-
-        temperatureSocket.onclose = function(e) {
-            console.error('Temperature WebSocket closed unexpectedly');
-        };
-
-        humiditySocket.onclose = function(e) {
-            console.error('Humidity WebSocket closed unexpectedly');
-        };
-    </script>
-</body>
-</html>
+    <div class="row text-center align-items-center mt-5 bg-dark text-light" style="height:40vh;">
+        <div class="col-md-6">
+            <h2>Temperature: <span id='temperature' class="fs-1">--</span>°C</h2>
+        </div>
+        <div class="col-md-6">
+            <h2>Humidity: <span id='humidity' class="fs-1">--</span>%</h2>
+        </div>
+    </div>
+    <div id="serial-data"></div>
+    <div class="alert-table mt-5 border rounded p-2" style="height:60vh;">
+        <h5>Alert Logs</h5>
+        <table id="alertTable" class="display table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Stage</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

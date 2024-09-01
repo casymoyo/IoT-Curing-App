@@ -5,6 +5,6 @@ from app.routing import websocket_urlpatterns
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('app/', include('app.urls')),
-    # path('users/', include('users.urls'))
+    path('users/', include('users.urls', namespace='users')),
     re_path(r'ws/', include(websocket_urlpatterns)),
 ]

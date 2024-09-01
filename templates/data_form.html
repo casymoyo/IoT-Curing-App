@@ -1,0 +1,58 @@
+<!-- templates/data_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Data</title>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('data-form');
+            
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const formData = new FormData(form);
+
+                fetch('{% url "record-data" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Data recorded successfully!');
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while recording data.');
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Record Temperature and Humidity</h1>
+        <form id="data-form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_temperature">Temperature</label>
+                <input type="number" step="any" name="temperature" id="id_temperature" class="form-control" required>
+            </div>
+            <div class="form-group mt-3">
+                <label for="id_humidity">Humidity</label>
+                <input type="number" step="any" name="humidity" id="id_humidity" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

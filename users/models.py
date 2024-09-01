@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    roles = models.CharField(max_length=10, choices=(
+    role = models.CharField(max_length=10, choices=(
         ('Admin', 'Admin'),
         ('Operator', 'Operator')
     ))

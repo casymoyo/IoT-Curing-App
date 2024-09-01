@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div>
+        <div class='d-flex justify-content-between align-items-center'>
+            <div class="d-flex align-items-center">
+                <div class="hint--bottom" aria-label="Dashboard">
+                    <a href="" class="bx bx-home bg-secondary text-light btn fs-3">
+                    
+                    </a>
+                </div>
+                <h3 class="mt-4 mb-4 mx-2">Reports</h3>
+            </div>
+
+            <div class="d-flex">
+                <form id="filter-form" class="d-flex">
+                    <div class="form-group">
+                        <select name="filter_time" id="filter_time" class="form-control">
+                            <option value="today" selected>Today</option>
+                            <option value="week">This week</option>
+                            <option value="month">This month</option>
+                            <option value="year">This year</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary mx-2" onclick="updateReport()">Filter</button>
+                </form>
+        
+                <a id="download-link" class="btn btn-success" href="#">Download Report</a>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h5>Temperature Stage Averages</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Initial (°C)</th>
+                            <th>Mid (°C)</th>
+                            <th>Final (°C)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="temperature-stage-averages">
+                        <!-- This will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h5>Humidity Stage Averages</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Initial (%)</th>
+                            <th>Mid (%)</th>
+                            <th>Final (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="humidity-stage-averages">
+                        <!-- This will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Temperature (24-hour average)</h5>
+                <canvas id="temperatureChart"></canvas>
+            </div>
+
+            <div class="col-md-6">
+                <h5>Humidity (24-hour average)</h5>
+                <canvas id="humidityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>Day with Most Alerts</h2>
+                <p id="top-alert-day"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let temperatureChart, humidityChart;
+
+
+        function updateReport() {
+            const filterTime = document.getElementById('filter_time').value;
+            const reportUrl = `{% url 'report-data' %}?filter_time=${filterTime}`; 
+            
+            fetch(reportUrl)
+                .then(response => response.json())
+                .then(data => {
+                    updateCharts(data.temperature_data, data.humidity_data);
+                    updateStageAverages(data.temperature_stage_averages, data.humidity_stage_averages);
+
+                    if (data.top_alert_day) {
+                        document.getElementById('top-alert-day').innerHTML = `
+                            <strong>Date:</strong> ${data.top_alert_day.timestamp__date}<br>
+                            <strong>Number of Alerts:</strong> ${data.top_alert_day.alert_count}
+                        `;
+                    } else {
+                        document.getElementById('top-alert-day').innerHTML = 'No alerts recorded.';
+                    }
+
+                    document.getElementById('download-link').href = `{% url 'download-report' %}?filter_time=${filterTime}`;  // Update this URL as needed
+                });
+        }
+
+        function updateStageAverages(temperatureData, humidityData) {
+            const tempTable = document.getElementById('temperature-stage-averages');
+            const humTable = document.getElementById('humidity-stage-averages');
+
+            tempTable.innerHTML = '';
+            humTable.innerHTML = '';
+
+            for (const [stage, data] of Object.entries(temperatureData)) {
+                tempTable.innerHTML += `
+                    <tr>
+                        <td>${stage}</td>
+                        <td>${data.initial_avg !== null ? data.initial_avg.toFixed(2) : 'N/A'}</td>
+                        <td>${data.mid_avg !== null ? data.mid_avg.toFixed(2) : 'N/A'}</td>
+                        <td>${data.final_avg !== null ? data.final_avg.toFixed(2) : 'N/A'}</td>
+                    </tr>
+                `;
+            }
+
+            for (const [stage, data] of Object.entries(humidityData)) {
+                humTable.innerHTML += `
+                    <tr>
+                        <td>${stage}</td>
+                        <td>${data.initial_avg !== null ? data.initial_avg.toFixed(2) : 'N/A'}</td>
+                        <td>${data.mid_avg !== null ? data.mid_avg.toFixed(2) : 'N/A'}</td>
+                        <td>${data.final_avg !== null ? data.final_avg.toFixed(2) : 'N/A'}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateCharts(temperatureData, humidityData) {
+            const ctx1 = document.getElementById('temperatureChart').getContext('2d');
+            const ctx2 = document.getElementById('humidityChart').getContext('2d');
+
+            if (temperatureChart) temperatureChart.destroy();
+            if (humidityChart) humidityChart.destroy();
+
+            temperatureChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: temperatureData.map(item => item.hour),
+                    datasets: [{
+                        label: 'Average Temperature (°C)',
+                        data: temperatureData.map(item => item.average_value),
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: getChartOptions('Temperature (°C)')
+            });
+
+            humidityChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: humidityData.map(item => item.hour),
+                    datasets: [{
+                        label: 'Average Humidity (%)',
+                        data: humidityData.map(item => item.average_value),
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: getChartOptions('Humidity (%)')
+            });
+        }
+
+        function getChartOptions(yAxisLabel) {
+            return {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hour of Day'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: yAxisLabel
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', updateReport);
+    </script>
+{% endblock content %}
