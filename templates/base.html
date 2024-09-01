@@ -38,31 +38,43 @@
     <div class="Tobbace Curing App">
         <div class="row">
             <div class=" top-bar">
-                <nav class="p-2 border">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <div>
-                            <h4 class="fw-bold">Tobaco Curing APP</h4>
-                        </div>
-                        <div>
-                            <ul class="list-unstyled d-flex align-items-center">
-                                <li class="mx-2">
-                                    <a href='{% url "report-view" %}' class='btn btn-outline-dark'>Reports</a>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container-fluid">
+                        <a class="navbar-brand fw-bold" href="{% url 'dashboard'%}">Tobaco Curing APP</a>
+                        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+            
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-auto">
+                                <li class="nav-item border rounded">
+                                    <a class="nav-link" href='{% url "report-view" %}'>Reports</a>
                                 </li>
-                                <li class="mx-2">
-                                    <a href='{% url "users:users" %}' class='btn btn-outline-dark'>Users</a>
+                                <li class="nav-item border rounded mx-2">
+                                    <a class="nav-link" href='{% url "users:users" %}'>Users</a>
                                 </li>
-                                <li class="mx-2">
-                                    <a href='{% url "config-list" %}' class='btn btn-outline-dark'>Configuration</a>
+                                <li class="nav-item border rounded">
+                                    <a class="nav-link" href='{% url "config-list" %}'>Configuration</a>
                                 </li>
-                                <li class="mx-2">{{ request.user }}</li>
-                                <li class='btn border btn-danger bx bx-log-out-circle mt-1 fs-3 cursor-pointer' data-bs-toggle="modal" data-bs-target="#logoutModal"></li>
+                                <li class="nav-item mx-2">
+                                    <span class="nav-link d-flex align-items-center">
+                                        <i class="fas fa-user fs-4 text-muted"></i>
+                                        <span class=''>{{ request.user }}</span>
+                                    </span>
+                                </li>
+                                <li class="nav-item hint--bottom" aria-label='Logout'>
+                                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                        <i class="fas fa-sign-out-alt fs-4"></i>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </nav>
                     <div class="row">
                         <div>
-                            <div class="app-area overflow mx-2">
+                            <div class="app-area overflow container-fluid">
                                 {% if messages %}
                                     {% for message in messages %}
                                         <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">

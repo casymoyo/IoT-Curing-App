@@ -3,7 +3,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
-  <h5>Configurations</h5>
+  <div class="d-flex align-items-center">
+    <div class="hint--bottom" aria-label="Dashboard">
+        <a href="{% url 'dashboard' %}" class="bx bx-home bg-secondary text-light btn fs-5"></a>
+    </div>
+    <h3 class="mt-4 mb-4 mx-2">Configurations</h3>
+  </div>
   <a href="{% url 'config-create' %}" class="btn btn-primary btn-sm">Add New Config</a>
 </div>
 <table id="configTable" class="table table-striped table-bordered mt-4">

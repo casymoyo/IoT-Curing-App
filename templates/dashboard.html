@@ -23,7 +23,7 @@
         justify-content: center;
     }
 </style>
-<div class="container">
+<div>
     <div class='d-flex justify-content-between mt-3'>
         <h4>Stage</h4>
         <div>
@@ -36,7 +36,7 @@
             </select>
         </div>
     </div>
-    <div class="row text-center align-items-center mt-5 bg-dark text-light" style="height:40vh;">
+    <div class="row text-center align-items-center mt-3 bg-dark rounded text-light" style="height:40vh;">
         <div class="col-md-6">
             <h2>Temperature: <span id='temperature' class="fs-1">--</span>°C</h2>
         </div>
@@ -47,7 +47,7 @@
     <div id="serial-data"></div>
     <div class="alert-table mt-5 border rounded p-2" style="height:60vh;">
         <h5>Alert Logs</h5>
-        <table id="alertTable" class="display table">
+        <table id="alertTable" class="display table" style="height:60vh; overflow-y:auto;">
             <thead>
                 <tr>
                     <th>Timestamp</th>
@@ -56,9 +56,45 @@
                     <th>Description</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </div>
+<script>
+    
+    document.getElementById('stage-select').addEventListener('change', function () {
+        const selectedStageId = this.value;
+        
+        fetch('{% url "update-stage" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'stage_id': selectedStageId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Stage Updated',
+                    text: 'Stage updated to: ' + data.selected_stage
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'Failed to update stage: ' + data.message
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the stage.');
+        });
+    });
+</script>
 {% endblock content %}

@@ -6,13 +6,16 @@
 <div class="users">
     <div class='mt-2 mb-2'>
         <div class='mt-2 d-flex justify-content-between align-items-center'>
-            <div>
-                <span class='mt-2 fs-5 mx-2'>Users</span>
-            </div>
+            <div class="d-flex align-items-center">
+                <div class="hint--bottom" aria-label="Dashboard">
+                    <a href="{% url 'dashboard' %}" class="bx bx-home bg-secondary text-light btn fs-5"></a>
+                </div>
+                <h3 class="mt-4 mb-4 mx-2">Users</h3>
+              </div>
             <div>
                 <ul class="list-unstyled mt-3">
                     <li>
-                        <button id="addUser" class="btn btn-outline-dark">Add User</button>
+                        <button id="addUser" class="btn btn-primary">Add User</button>
                     </li>
                 </ul>
             </div>
