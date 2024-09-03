@@ -122,20 +122,20 @@ def record_data(request):
                 stage=current_stage
             )
             
-            # try:
-            #     if temp_status in [AlertLog.AlertType.MID, AlertLog.AlertType.HIGH]:
-            #         send_whatsapp_message(
-            #             '+263717773066',  # Recipient number
-            #             f"Temperature Alert: {temp_description} - {temperature}°C"
-            #         )
+            try:
+                if temp_status in [AlertLog.AlertType.MID, AlertLog.AlertType.HIGH]:
+                    send_whatsapp_message(
+                        '+263717773066',  # Recipient number
+                        f"Temperature Alert: {temp_description} - {temperature}°C"
+                    )
 
-            #     if humidity_status in [AlertLog.AlertType.MID, AlertLog.AlertType.HIGH]:
-            #         send_whatsapp_message(
-            #             '+263717773066',  # Recipient number
-            #             f"Humidity Alert: {humidity_description} - {humidity}%"
-            #         )
-            # except Exception as e:
-            #     logger.info(f'whatsapp twilio: {e}')
+                if humidity_status in [AlertLog.AlertType.MID, AlertLog.AlertType.HIGH]:
+                    send_whatsapp_message(
+                        '+263717773066',  # Recipient number
+                        f"Humidity Alert: {humidity_description} - {humidity}%"
+                    )
+            except Exception as e:
+                logger.info(f'whatsapp twilio: {e}')
                 
             return JsonResponse({'status': 'success'}, status=201)
         except Exception as e:
