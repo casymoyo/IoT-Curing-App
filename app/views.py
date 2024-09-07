@@ -68,12 +68,12 @@ def alert_log_list(request):
         logs = list(AlertLog.objects.values('timestamp', 'type', 'description'))
         return JsonResponse(logs, safe=False)
 
-
 @login_required
 def record_data(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            logger.info(data)
             temperature = float(data.get('temperature'))
             humidity = float(data.get('humidity'))
 
@@ -145,6 +145,7 @@ def record_data(request):
                 
             return JsonResponse({'status': 'success'}, status=201)
         except Exception as e:
+            logger.info(e)
             return JsonResponse({'status': 'failed', 'message': str(e)}, status=400)
 
     return JsonResponse({'status': 'failed'}, status=400)
@@ -167,7 +168,6 @@ def config_create(request):
     
     return render(request, 'config_form.html', {'form': form})
 
-
 @login_required
 def config_update(request, pk):
     config = get_object_or_404(Config, pk=pk)
@@ -181,7 +181,6 @@ def config_update(request, pk):
         form = ConfigForm(instance=config)
     
     return render(request, 'config_form.html', {'form': form})
-
 
 @login_required
 def config_delete(request, pk):
@@ -236,11 +235,10 @@ def report_data(request):
     except ObjectDoesNotExist as e:
         logger.error(f"Database query failed: {str(e)}")
         return JsonResponse({'error': 'Data not found'}, status=404)
-    except Exception as e:
-        logger.error(f"Unexpected error occurred: {str(e)}")
-        return JsonResponse({'error': 'Internal server error'}, status=500)
+    # except Exception as e:
+    #     logger.error(f"Unexpected error occurred: {str(e)}")
+    #     return JsonResponse({'error': 'Internal server error'}, status=500)
 
-@login_required
 def get_hourly_average(model, start_time, end_time):
     data = model.objects.filter(timestamp__gte=start_time, timestamp__lte=end_time)\
         .annotate(hour=ExtractHour('timestamp'))\
@@ -257,7 +255,7 @@ def get_hourly_average(model, start_time, end_time):
 
     return list(hourly_data.values())
 
-@login_required
+
 def get_stage_averages(model, start_time, end_time):
     stage_data = model.objects.filter(timestamp__gte=start_time, timestamp__lte=end_time)\
         .values('stage')\

@@ -15,7 +15,7 @@ const socket = new WebSocket('ws://' + window.location.host + '/ws/serial-data/'
             hum.textContent = data.humidity 
         }
 
-        fetch('/app/api/record/', {
+        fetch('api/record/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const socket = new WebSocket('ws://' + window.location.host + '/ws/serial-data/'
         const tableBody = document.querySelector('#alertTable tbody');
 
         if(tableBody){
-            fetch('/app/logs/')
+            fetch('/logs/')
             .then(response => response.json())
             .then(data => {
                 if (Array.isArray(data)) {
