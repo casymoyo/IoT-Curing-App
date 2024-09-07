@@ -63,7 +63,7 @@ TEMPLATES = [
         },
     },
 ]
-
+LOGIN_URL = '/users/login/'
 # ASGI application
 ASGI_APPLICATION = 'curing_backend.asgi.application'
 WSGI_APPLICATION = "curing_backend.wsgi.application"

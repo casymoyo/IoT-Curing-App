@@ -20,7 +20,9 @@ from utils.serial import read_serial_data
 from django.db.models.functions import ExtractHour
 from twilio.rest import Client
 from .twilio_service import send_whatsapp_message
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def update_stage(request):
     if request.method == 'POST':
         stage_id = request.POST.get('stage_id')
@@ -37,10 +39,12 @@ def update_stage(request):
         return JsonResponse({'status': 'success', 'selected_stage': stage.name}, status=200)
     return JsonResponse({'status': 'failed', 'message': 'Invalid request method'}, status=400)
 
+@login_required
 def dashboard(request):
     stages = Stage.objects.all()
     return render(request, 'dashboard.html', {'stages':stages})
 
+@login_required
 def alert_log_data(request):
     logs = AlertLog.objects.all().values(
         'timestamp',
@@ -50,7 +54,7 @@ def alert_log_data(request):
     )
     return JsonResponse(list(logs), safe=False)
 
-
+@login_required
 def serial_data_view(request):
     data = read_serial_data()
     logger.info(data)
@@ -58,12 +62,14 @@ def serial_data_view(request):
         return JsonResponse({'status': 'error', 'message': data}, status=500)
     return JsonResponse({'status': 'success', 'data': data})
 
-
+@login_required
 def alert_log_list(request):
     if request.method == 'GET':
         logs = list(AlertLog.objects.values('timestamp', 'type', 'description'))
         return JsonResponse(logs, safe=False)
 
+
+@login_required
 def record_data(request):
     if request.method == 'POST':
         try:
@@ -125,13 +131,13 @@ def record_data(request):
             try:
                 if temp_status in [AlertLog.AlertType.MID, AlertLog.AlertType.HIGH]:
                     send_whatsapp_message(
-                        '+263717773066',  # Recipient number
+                        '+263717773066',  
                         f"Temperature Alert: {temp_description} - {temperature}°C"
                     )
 
                 if humidity_status in [AlertLog.AlertType.MID, AlertLog.AlertType.HIGH]:
                     send_whatsapp_message(
-                        '+263717773066',  # Recipient number
+                        '+263717773066',
                         f"Humidity Alert: {humidity_description} - {humidity}%"
                     )
             except Exception as e:
@@ -143,13 +149,12 @@ def record_data(request):
 
     return JsonResponse({'status': 'failed'}, status=400)
 
-
+@login_required
 def config_list(request):
     configs = Config.objects.all()
     return render(request, 'config_list.html', {'object_list': configs})
 
-
-@require_http_methods(["GET", "POST"])
+@login_required
 def config_create(request):
     if request.method == 'POST':
         form = ConfigForm(request.POST)
@@ -163,7 +168,7 @@ def config_create(request):
     return render(request, 'config_form.html', {'form': form})
 
 
-@require_http_methods(["GET", "POST"])
+@login_required
 def config_update(request, pk):
     config = get_object_or_404(Config, pk=pk)
     if request.method == 'POST':
@@ -178,7 +183,7 @@ def config_update(request, pk):
     return render(request, 'config_form.html', {'form': form})
 
 
-@require_http_methods(["POST"])
+@login_required
 def config_delete(request, pk):
     config = get_object_or_404(Config, pk=pk)
     if request.method == 'POST':
@@ -187,7 +192,7 @@ def config_delete(request, pk):
         return redirect(reverse('config-list'))
     return HttpResponseForbidden("Invalid request")
 
-
+@login_required
 def report_data(request):
     filter_time = request.GET.get('filter_time', 'today')
     now = timezone.now()
@@ -235,6 +240,7 @@ def report_data(request):
         logger.error(f"Unexpected error occurred: {str(e)}")
         return JsonResponse({'error': 'Internal server error'}, status=500)
 
+@login_required
 def get_hourly_average(model, start_time, end_time):
     data = model.objects.filter(timestamp__gte=start_time, timestamp__lte=end_time)\
         .annotate(hour=ExtractHour('timestamp'))\
@@ -251,6 +257,7 @@ def get_hourly_average(model, start_time, end_time):
 
     return list(hourly_data.values())
 
+@login_required
 def get_stage_averages(model, start_time, end_time):
     stage_data = model.objects.filter(timestamp__gte=start_time, timestamp__lte=end_time)\
         .values('stage')\
@@ -269,6 +276,7 @@ def get_stage_averages(model, start_time, end_time):
         for item in stage_data
     }
 
+@login_required
 def report_view(request):
     now = timezone.now()
     filter_time = request.GET.get('filter_time', '5min')
@@ -298,6 +306,7 @@ def report_view(request):
 
     return render(request, 'report.html', context)
 
+@login_required
 def download_report(request):
     filter_time = request.GET.get('filter_time', '5min')
     now = timezone.now()

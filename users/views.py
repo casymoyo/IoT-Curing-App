@@ -63,14 +63,6 @@ def login_view(request):
                 messages.error(request, 'Your account is not active, contact admin')
         else:
             messages.warning(request, 'Invalid username or password')
-    
-    # if request.method == 'GET':
-    #     User = get_user_model()
-    #     if not User.objects.exists():
-    #         logger.info('here')
-    #         return redirect('company:register_company')
-    #     elif request.user.is_authenticated:
-    #         return redirect('pos:pos')
     return render(request, 'auth/login.html')
 
 

@@ -20,7 +20,7 @@
     {% endblock css %}
 
     <title>
-        {% block title %}Restaurant{% endblock %}
+        {% block title %}Tobaco Curing App{% endblock %}
     </title>
 </head>
 <style>
@@ -43,10 +43,10 @@
     <div class="login">
         <div class="">
             <div class="login d-flex flex-column align-items-center justify-content-center">
-                <div class="logo">
-                    <!-- <img src="{% static 'assets/logo.png' %}" width="250px"/> -->
+                <div class="logo text-light">
+                    <h2>Tobaco Curing App</h2>
                 </div>
-                <div class="login-form rounded d-flex align-items-center mt-4">
+                <div class="login-form rounded d-flex align-items-center">
                     <form method="post" class="p-3">
                         {{ form }}
                         {% csrf_token %}
