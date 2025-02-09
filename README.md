@@ -83,7 +83,11 @@ Open a browser and visit:
 
 ```
 http://127.0.0.1:8000
+username: admin
+password: neverfail
 ```
+## NB to see real time values you have to connect your dht11 sensor on esp8226 or any other sensor and make sure the serial port you put matches the serial port configured in the app in the file  consumers on line 23. 
+
 
 ## Database Schema
 

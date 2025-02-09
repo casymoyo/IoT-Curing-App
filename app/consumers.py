@@ -16,7 +16,6 @@ class SerialDataConsumer(AsyncWebsocketConsumer):
             self.serial_task.cancel()
 
     async def receive(self, text_data):
-        # You can handle messages received from WebSocket clients here
         pass
 
     async def read_serial_data(self):
@@ -39,9 +38,6 @@ class SerialDataConsumer(AsyncWebsocketConsumer):
                             "temperature": temperature
                         }
                         
-                        # # save the data to the database
-                        # await record_data(temperature, humidity)
-                
                         await self.send(text_data=json.dumps(data))
                     else:
                         logger.warning(f"Line did not match the expected format: {line}")
