@@ -83,7 +83,7 @@ Open a browser and visit:
 
 ```
 http://127.0.0.1:8000
-username: admin
+username: casy@email.com
 password: neverfail
 ```
 ## NB to see real time values you have to connect your dht11 sensor on esp8226 or any other sensor and make sure the serial port you put matches the serial port configured in the app in the file  consumers on line 23. 
@@ -139,19 +139,10 @@ This table stores logs of any alerts triggered by deviations in temperature or h
 
 The app uses **WebSockets** for real-time data updates. The data from the DHT11 sensor is continuously sent to the front end, allowing you to see the latest temperature and humidity values without needing to refresh the page.
 
-## Contributing
 
-Feel free to contribute to this project. To do so:
+<!-- ## License
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature-branch`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to your branch (`git push origin feature-branch`)
-5. Create a new Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -->
 
 ## Acknowledgments
 

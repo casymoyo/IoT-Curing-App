@@ -21,6 +21,8 @@ from django.db.models.functions import ExtractHour
 from twilio.rest import Client
 from .twilio_service import send_whatsapp_message
 from django.contrib.auth.decorators import login_required
+import csv
+from django.http import HttpResponse
 
 @login_required
 def update_stage(request):
@@ -321,8 +323,6 @@ def download_report(request):
     temperature_data = Temperature.objects.filter(timestamp__gte=start_time)
     humidity_data = Humidity.objects.filter(timestamp__gte=start_time)
     
-    import csv
-    from django.http import HttpResponse
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename="report_{filter_time}.csv"'
