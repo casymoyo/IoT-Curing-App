@@ -17,3 +17,6 @@ test.png
 *.cpython-312.pyc
 */__pycache__/*
 *.pyc
+.docker-compose.yml
+.dockerfile
+.venv/
