@@ -15,7 +15,7 @@ SECRET_KEY='django-insecure-3m$$5om_jd5=rk*1x9(@=-=o8(j!^y(@!)iz^38q6*^w#6v+4n'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["iot-curing-app.onrender.com"]
+ALLOWED_HOSTS = ["iot-curing-app.onrender.com", "127.0.0.1"]
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware,",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -126,6 +127,9 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
