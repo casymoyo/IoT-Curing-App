@@ -1,17 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<div>
-  <div class='mb-2 bg-dark text-light p-2'>
-    <h4>{% if object %}Edit{% else %}Add{% endif %} Configuration</h4>
-</div>
-<div class='container'>
-  <form method="post">
-    {% csrf_token %}
-    {{ form | crispy }}
-    <button type="submit" class="btn btn-primary btn-sm w-100">Save</button>
-  </form>
-</div>
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <!-- Header -->
+    <div class="card-header bg-dark text-white">
+      <h5 class="mb-0">{% if object %}Edit{% else %}Add{% endif %} Configuration</h5>
+    </div>
+
+    <!-- Form Body -->
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary w-100 mt-3">Save</button>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
